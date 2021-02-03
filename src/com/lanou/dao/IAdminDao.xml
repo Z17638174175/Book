@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanou.dao.IAdminDao">
+ <select id="login" resultType="com.lanou.bean.Admin">
+ select * from t_admin where adminname=#{adminname} and adminpwd=#{adminpwd}
+ </select>
+ <select id="PageCount" resultType="int">
+    select count(*) count from t_admin
+ </select>
+ 
+  <select id="getByPage" resultType="com.lanou.bean.Admin">
+  <bind name="key" value="(pagenum-1)*pagecount"/>
+    select *from t_admin limit #{key},#{pagecount}
+ </select>
+<update id="adminEdit">
+     update t_admin set adminname=#{adminname},adminpwd=#{adminpwd} where id=#{id}
+</update>
+
+<insert id="adminAdd">
+   insert into t_admin (adminname,adminpwd) values (#{adminname},#{adminpwd})
+</insert>
+
+<delete id="adminDel">
+ delete from t_admin where id=#{id}
+</delete>
+</mapper>

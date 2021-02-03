@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>BookManage</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+      <servlet>
+	  <servlet-name>carouselServlet</servlet-name>
+	  <servlet-class>com.lanou.servlet.CarouselServlet</servlet-class>
+	  <multipart-config>
+         <max-file-size>10485760</max-file-size>
+         <max-request-size>20971520</max-request-size>
+         <file-size-threshold>5242880</file-size-threshold>
+    </multipart-config>
+  </servlet>
+  <servlet-mapping>
+	   <servlet-name>carouselServlet</servlet-name>
+	   <url-pattern>/carouselServlet</url-pattern>
+  </servlet-mapping>
+ 
+   <servlet>
+	  <servlet-name>productServ</servlet-name>
+	  <servlet-class>com.lanou.servlet.ProductServlet</servlet-class>
+	  <multipart-config>
+         <max-file-size>10485760</max-file-size>
+         <max-request-size>20971520</max-request-size>
+         <file-size-threshold>5242880</file-size-threshold>
+    </multipart-config>
+  </servlet>
+  <servlet-mapping>
+	   <servlet-name>productServ</servlet-name>
+	   <url-pattern>/productServ</url-pattern>
+  </servlet-mapping>
+  
+  <filter>
+  <filter-name>encodingFilter</filter-name>
+  <filter-class>com.lanou.filter.EncodingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  <filter-name>encodingFilter</filter-name>
+  <url-pattern>/*</url-pattern>
+  </filter-mapping>
+</web-app>

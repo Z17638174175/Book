@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Layui</title>
+ <script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+ <script type="text/javascript">
+ function shows() {
+		
+	  var r = new FileReader();
+	  var f = document.getElementById("file").files[0];
+	  r.readAsDataURL(f);
+	  r.onload=function (e) {
+	   document.getElementById("show").src=this.result;
+	  };
+	 }
+ </script>
+</head>
+<body>
+<form action="../../carouselServlet" method="post"  enctype="multipart/form-data">	
+	<input type="hidden" name="op" value="add">
+	
+	请选择上传的文件<input type="file" name="nfile" id="file" onchange="shows()">
+	<img  id="show" src="">
+	<input type="submit" value="提交">
+</form>
+</body>
+</html>

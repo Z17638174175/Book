@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		  <meta name="renderer" content="webkit">
+		  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="../js/css/layui.css">
+		<script type="text/javascript" src="../js/layui.js"></script>
+		<script>
+		
+		$(function(){
+			$.post({
+				url:"../../productServ",
+				data:"op=1",
+				dataType:"json",
+				success:function(data){
+					var alltype=data.data;
+					for (var i in alltype){
+						var type=alltype[i];
+						var typename=type.title;
+						var typeID=type.id;
+						var $op=$("<option value='"+typeID+"'>"+typename+"</option>");
+						$("#quiz1").append($op);
+					}
+					layui.use('form', function(){
+						  var form = layui.form; 
+						  form.render();
+						}); 
+				}
+			})
+		})
+			
+
+		</script>
+		
+	</head>
+	<body>
+<form id="addform" class="layui-form layui-form-pane" action="" enctype="multipart/form-data">
+  <input type="hidden" id="op" name="op" value="add">
+  <div class="layui-form-item">
+    <label class="layui-form-label">名称</label>
+    <div class="layui-input-inline">
+      <input type="text" id="pname" name="pname"  lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  
+  <div class="layui-form-item">
+   
+    <div class="layui-input-inline">
+      
+	<input type="file" class="layui-btn" id="nfile" name="nfile" onchange="shows()">
+	  <img alt="" src="" id="show" width="200" height="200">
+    </div>
+  
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">价钱</label>
+    <div class="layui-input-inline">
+      <input type="text" id="price"  name="price" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  
+  <div class="layui-form-item">
+    <label class="layui-form-label">标题</label>
+    <div class="layui-input-inline">
+      <input type="text" id="ptitle"  name="ptitle" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+    
+  <div class="layui-form-item">
+    <label class="layui-form-label">访问次数</label>
+    <div class="layui-input-inline">
+      <input type="text" id="pv" name="pv" lay-verify="required" value="0" placeholder="请输入" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+	   <div class="layui-form-item">
+		<div class="layui-form-item">
+	      <select  id="quiz1" lay-filter="quiz1">
+	        <option value="">请选择一级类别</option>
+	       
+	      </select>
+	    </div>
+	<div class="layui-form-item">
+	      <select  id="quiz2" lay-filter="quiz2">
+	      <option value="">请选择二级类别</option>
+	      </select>
+		</div>
+		<div class="layui-form-item">
+	      <select  id="quiz3" lay-filter="quiz3">
+	        <option value="" >请选择三级类别</option>
+	       <input type="hidden" id="pid" name="pid" value="">
+	      </select>
+	 </div>
+	</div>
+  
+  <div class="layui-form-item">
+    <button id="add"  onclick="postData()" class="layui-btn" lay-submit="" lay-filter="demo2">新增</button>
+  </div>
+</form>
+<script type="text/javascript">
+		function shows() {
+			
+			  var r = new FileReader();
+			  var f = document.getElementById("nfile").files[0];
+			  r.readAsDataURL(f);
+			  r.onload=function (e) {
+			   document.getElementById("show").src=this.result;
+			  };
+			 }
+layui.use('form', function(){
+	
+		  var form = layui.form; 
+		  form.on('select(quiz1)', function (data) {
+			 
+			  $("#quiz2").html("<option>--请选择二级类别--</option>");
+			  $.post({
+					url:"../../productServ",
+					data:"op=2&parentid="+data.value,
+					dataType:"json",
+					success:function(data){
+						var alltype=data.data;
+						for (var i in alltype){
+							var type=alltype[i];
+							var typename=type.title;
+							var typeID=type.id;
+							var $op=$("<option value='"+typeID+"'>"+typename+"</option>");
+							
+							$("#quiz2").append($op);
+						}
+						
+						layui.use('form', function(){
+							  var form = layui.form; 
+							  form.render();
+							}); 
+					}
+				})
+			  
+        	});
+		  form.on('select(quiz2)', function (data) {
+			  
+			  $(".quiz2").val(data.innertext);
+			 
+			  $("#quiz3").html("<option>--请选择三级类别--</option>");
+			  $.post({
+					url:"../../productServ",
+					data:"op=3&parentid="+data.value,
+					dataType:"json",
+					success:function(data){
+						var alltype=data.data;
+						for (var i in alltype){
+							var type=alltype[i];
+							var typename=type.title;
+							var typeID=type.id;
+							var $op=$("<option value='"+typeID+"'>"+typename+"</option>");
+							
+							$("#quiz3").append($op);
+						}
+						
+						layui.use('form', function(){
+							  var form = layui.form; 
+							  form.render();
+							}); 
+					}
+				})
+			  
+        	});
+		  form.on('select(quiz3)', function (data) {
+			  var aa= data.value;
+			  
+			  $("#pid").val(aa);
+			  
+			
+		  });
+		}); 
+	</script>
+	
+	<script type="text/javascript">
+	function postData(){
+	    var formData = new FormData();
+	    formData.append("nfile",$('#nfile')[0].files[0]);
+	    formData.append("pname",$('#pname').val());
+	    formData.append("price",$('#price').val());
+	    formData.append("ptitle",$('#ptitle').val());
+	    formData.append("pv",$('#pv').val());
+	    formData.append("pid",$('#pid').val());
+	    formData.append("op",$('#op').val());
+	   
+	    $.ajax({
+	        url:'../../productServ', /*接口域名地址*/
+	        type:'post',
+	        data: formData,
+	        dataType:'json',
+	        contentType: false,
+	        processData: false,
+	        success:function(){
+	           
+	        	location.href = "product.html";
+	        }
+	    })
+	}
+	</script>
+	</body>
+</html>

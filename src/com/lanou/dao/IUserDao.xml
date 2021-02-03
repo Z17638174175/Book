@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanou.dao.IUserDao">
+ <select id="getAllByPage" resultType="com.lanou.bean.User">
+  <bind name="key" value="(pagenum-1)*pagecount"/>
+    select * from t_user limit #{key},#{pagecount}
+ </select>
+ <select id="getPageCount" resultType="int">
+    select count(*) count from t_user
+ </select>
+ 
+<update id="userEditById">
+     update t_user set name=#{name},pwd=#{pwd},phone=#{phone},mail=#{mail},address=#{address} where id=#{id}
+</update>
+
+<insert id="userAdd">
+   insert into t_user (name,pwd,phone,mail,address) values (#{name},#{pwd},#{phone},#{mail},#{address})
+</insert>
+
+<delete id="userDel">
+ delete from t_user where id=#{id}
+</delete>
+<select id="getAllById" resultType="com.lanou.bean.User">
+   select *from t_user where id=#{id}
+ </select>
+ <select id="login" resultType="com.lanou.bean.User">
+    select * from t_user where name=#{name} and pwd=#{pwd}
+ </select>
+</mapper>

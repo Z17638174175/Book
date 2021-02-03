@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="../js/css/layui.css">
+		<script type="text/javascript" src="../js/layui.js"></script>
+	<style>
+		.layui-table-cell{ text-align: center; height: auto; white-space: normal;}
+	</style>
+		<script>
+		layui.use('table', function(){
+		  var table = layui.table;
+		  
+		  table.render({
+		     elem: '#test'
+		    ,url:'../../productServ'
+		    ,cellMinWidth: 80 
+		    ,page:true
+		    ,cols: [[
+		      {field:'id', width:80, title: 'ID', sort: true}
+		      ,{field:'pname', width:80, title: '用户名'}  
+		      ,{field:'pimg', width:250, title: '图片',templet:'<div><img src="../../../BookP/{{ d.pimg}}"></div>'}
+		      ,{field:'price', width:80, title: '价格', sort: true}
+		      ,{field:'ptitle', width:280, title: '标题', sort: true}
+		      ,{field:'pv', width:80, title: '访问次数', sort: true}
+		      ,{field:'pnames', width:250, title: '所属类型', sort: true}
+		      ,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
+		
+		    ]]
+	  });
+	});
+		
+		
+</script>
+<script>
+
+			
+
+		</script>
+	</head>
+<body>
+		<table id=test lay-filter="test" class="layui-hide"></table>
+		
+		<!-- 以下的form表单是修改的表单 开始是隐藏的 点击编辑 弹出此form表单 -->
+		<form style="display:none" id="editform" lay-filter="formTest" class="layui-form layui-form-pane" action="">
+		  <input type="hidden" id="op" name="op" value="edit">
+		  <input type="hidden" id= "id" name="id" value="">
+		  <div class="layui-form-item">
+		    <label class="layui-form-label">产品名称</label>
+		    <div class="layui-input-inline">
+		      <input type="text" id="pname" name="pname" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		  </div>
+				  
+		  <div class="layui-form-item">
+		   
+		    <div class="layui-input-inline">
+		      
+			<input type="file" class="layui-btn" id="nfile" name="nfile" >
+			
+		    </div>
+		  </div>
+		  
+		   <div class="layui-form-item">
+		    <label class="layui-form-label">价格</label>
+		    <div class="layui-input-inline">
+		      <input type="text" id="price" name="price" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		  </div>
+		  
+		   <div class="layui-form-item">
+		    <label class="layui-form-label">标题</label>
+		    <div class="layui-input-inline">
+		      <input type="text" id="ptitle" name="ptitle" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+		    </div>
+		  </div>
+		  
+		   <div class="layui-form-item">
+		    <label class="layui-form-label">访问次数</label>
+		    <div class="layui-input-inline">
+		      <input type="text" id="pv" name="pv" lay-verify="required" value="0" autocomplete="off" class="layui-input">
+		    </div>
+		  </div>
+		  
+		   <div class="layui-form-item">
+		<div class="layui-form-item">
+	      <select  id="quiz1" lay-filter="quiz1">
+	        <option value="" id="aa1">请选择一级类别</option>
+	       
+	      </select>
+	    </div>
+	<div class="layui-form-item">
+	      <select  id="quiz2" lay-filter="quiz2">
+	      <option value="" id="aa2">请选择二级类别</option>
+	      </select>
+		</div>
+		<div class="layui-form-item">
+	      <select  id="quiz3" lay-filter="quiz3">
+	        <option value="" id="aa3">请选择三级类别</option>
+	       <input type="hidden" id="pid" name="pid" value="">
+	      </select>
+	 </div>
+	</div>
+		  
+		  <div class="layui-form-item">
+		    <button id="edit" class="layui-btn"  onclick="postData()" lay-submit="" lay-filter="demo2">修改</button>
+		  </div>
+		</form>
+		
+		<!-- 添加操作的两个按钮 编辑和删除 -->
+		<script type="text/html" id="barDemo">
+    		<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</ a>
+    		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</ a>
+		</script>
+		
+		
+		
+		<script type="text/javascript">
+		/* 以下js代码使用layui的js来实现编辑和删除的功能 */
+		layui.use(['table','form'], function(){
+			  var table = layui.table;
+			  var form = layui.form;
+			  var $ = layui.$;
+			  table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+			      var data = obj.data; //获得当前行数据
+			       
+			      var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+			      var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+			      if(layEvent === 'del'){ //删除
+			            layer.confirm('真的删除ID为：'+data.id+"的用户吗?", function(index){
+			            
+			                //console.log(data.p_id);
+			                //向服务端发送删除指令
+			                    $.ajax({
+			                        url:'../../productServ',
+			                        type:'post',
+			                        data:{'id':data.id,'op':"del"},//向服务端发送删除的id
+			                        dataType:'json',
+			                        success:function(data){
+			                        	var suc = data.code;
+			                            if(suc==200){
+			                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+			                                layer.close(index);
+			                                console.log(index);
+			                                layer.msg("删除成功",{icon:1});
+			                            }
+			                            else{
+			                                layer.msg("删除失败",{icon:5});
+			                            }
+			                        }
+			                    });
+			                    layer.close(index); 
+			                     });
+			              
+			      } else if(layEvent === 'edit'){ //编辑
+			        console.log(data);
+			      
+			        var str = data.pnames
+			        var str1 = str.split("-")[0];
+			        var str2 = str.split("-")[1];
+			        var str3 = str.split("-")[2];
+			        $("#aa1").html(str1)
+			         $("#aa2").html(str2)
+			          $("#aa3").html(str3)
+			      					/* 打开上面隐藏的修改的form表单 */
+									layer.open({
+			                            type: 1,
+			                            area: ['500px', '400px'],
+			                            title: "更改信息",
+			                            fixed: false, //不固定
+			                            maxmin: true,
+			                            maxmin: false,
+			                            shadeClose:false,
+			                            content: $('#editform')
+			                          });
+			                          //表单值
+			                          form.val("formTest",{
+			                            "pname":data.pname,
+			                            "price":data.price,
+			                            "ptitle":data.ptitle,
+			                            "pv":data.pv,
+			                            "ptitle":data.ptitle,
+			                             "id":data.id,
+			                             "leixing":data.pnames
+			                            
+			                         	
+			                          
+			                         });
+			                          
+			                          $(function(){
+			                  			$.post({
+			                  				url:"../../productServ",
+			                  				data:"op=1",
+			                  				dataType:"json",
+			                  				success:function(data){
+			                  					var alltype=data.data;
+			                  					for (var i in alltype){
+			                  						var type=alltype[i];
+			                  						var typename=type.title;
+			                  						var typeID=type.id;
+			                  						var $op=$("<option value='"+typeID+"'>"+typename+"</option>");
+			                  						$("#quiz1").append($op);
+			                  					}
+			                  					layui.use('form', function(){
+			                  						  var form = layui.form; 
+			                  						  form.render();
+			                  						}); 
+			                  				}
+			                  			})
+			                  		})                    
+			       
+			        }
+			    });
+			  
+			});
+		</script>
+	<script type="text/javascript">
+layui.use('form', function(){
+	
+		  var form = layui.form; 
+		  form.on('select(quiz1)', function (data) {
+			 
+			  $("#quiz2").html("<option>--请选择二级类别--</option>");
+			  $("#quiz3").html("<option>--请选择三级类别--</option>");
+			  $.post({
+					url:"../../productServ",
+					data:"op=2&parentid="+data.value,
+					dataType:"json",
+					success:function(data){
+						var alltype=data.data;
+						for (var i in alltype){
+							var type=alltype[i];
+							var typename=type.title;
+							var typeID=type.id;
+							var $op=$("<option value='"+typeID+"'>"+typename+"</option>");
+							
+							$("#quiz2").append($op);
+						}
+						
+						layui.use('form', function(){
+							  var form = layui.form; 
+							  form.render();
+							}); 
+					}
+				})
+			  
+        	});
+		  form.on('select(quiz2)', function (data) {
+			  
+			  $(".quiz2").val(data.innertext);
+			 
+			  $("#quiz3").html("<option>--请选择三级类别--</option>");
+			  $.post({
+					url:"../../productServ",
+					data:"op=3&parentid="+data.value,
+					dataType:"json",
+					success:function(data){
+						var alltype=data.data;
+						for (var i in alltype){
+							var type=alltype[i];
+							var typename=type.title;
+							var typeID=type.id;
+							var $op=$("<option value='"+typeID+"'>"+typename+"</option>");
+							
+							$("#quiz3").append($op);
+						}
+						
+						layui.use('form', function(){
+							  var form = layui.form; 
+							  form.render();
+							}); 
+					}
+				})
+			  
+        	});
+		  form.on('select(quiz3)', function (data) {
+			  var aa= data.value;
+			  
+			  $("#pid").val(aa);
+			  
+			
+		  });
+		}); 
+	</script>	
+<script type="text/javascript">
+	function postData(){
+	    var formData = new FormData();
+	    formData.append("nfile",$('#nfile')[0].files[0]);
+	    formData.append("pname",$('#pname').val());
+	    formData.append("price",$('#price').val());
+	    formData.append("ptitle",$('#ptitle').val());
+	    formData.append("pv",$('#pv').val());
+	    formData.append("pid",$('#pid').val());
+	    formData.append("op",$('#op').val());
+	    formData.append("id",$('#id').val());
+	    $.ajax({
+	        url:'../../productServ', /*接口域名地址*/
+	        type:'post',
+	        data: formData,
+	        dataType:'json',
+	        contentType: false,
+	        processData: false,
+	        success:function(){
+	           
+	        	location.href = "product.html";
+	        }
+	    })
+	}
+	</script>
+	</body>
+</html>
